@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import Grid from "gridfs-stream";
 import methodOverride from "method-override";
 import { router as imageRouter } from "./routes/imageRouter.js";
+import { router as addReceipeRouter } from "./routes/addReceipeRouter.js";
+import { router as getReceipeRouter } from "./routes/getReceipeRouter.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 mongoose.set("strictQuery", true);
@@ -19,53 +20,68 @@ const dbConnection = async () => {
       useCreateIndex: true,
       useUnifiedTopology: true,
     };
-    await mongoose.connect(`mongodb://localhost:27017`);
-    console.log(`Connected to the database at: ${`mongodb://localhost:27017`}`);
+    await mongoose.connect(process.env.DBURI);
+    console.log(`Connected to the database at: ${process.env.DBURI}`);
   } catch (e) {
     console.log(`Database failed to connect: ${e.message}`);
   }
 };
+const url = process.env.DB;
+const connect = mongoose.createConnection(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+// Init gfs
 let gfs;
 dbConnection();
-const conn = mongoose.connection;
-conn.once("open", function () {
-  gfs = Grid(conn.db, mongoose.mongo);
-  gfs.collection("photos");
+connect.once("open", () => {
+  // Init stream
+  gfs = new mongoose.mongo.GridFSBucket(connect.db, {
+    bucketName: "photos",
+  });
 });
-console.log("GFS_______" + gfs);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(`/file`, imageRouter);
+app.use(`/addReceipe`, addReceipeRouter);
+app.use(`/getReceipe`, getReceipeRouter);
+
 // media GET routes and delete the routes of image.
 app.get("/file/:filename", async (req, res) => {
-  try {
-    const file = await gfs.files.find({ filename: req.params.filename });
-    console.log("GET FileName------" + req.params.filename);
-    console.dir(file);
-    const readStream = gfs.createReadStream(file.filename);
-    console.log(readStream);
-    readStream.pipe(res);
-  } catch (error) {
-    res.send("not found");
-  }
+  await gfs.find({ filename: req.params.filename }).toArray((err, files) => {
+    if (!files[0] || files.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Image Not Found!",
+      });
+    }
+    if (
+      files[0].contentType === `image/jpeg` ||
+      files[0].contentType === `image/png`
+    ) {
+      gfs.openDownloadStreamByName(req.params.filename).pipe(res);
+    } else {
+      res.status(404).json({
+        err: `Image Not Found!`,
+      });
+    }
+  });
 });
 
-app.delete("/file/:filename", async (req, res) => {
-  try {
-    console.log(req.params.filename);
-    await gfs.files.deleteOne({ filename: req.params.filename });
-    res.send("success");
-  } catch (error) {
-    console.log(error);
-    res.send("An error occured.");
-  }
+app.delete("/file/:id", async (req, res) => {
+  await gfs.delete(new mongoose.Types.ObjectId(req.params.id)),
+    (err, data) => {
+      return res.status(404).json({ err: err });
+    };
+  res
+    .status(200)
+    .json({ success: true, message: `Image Deleted Successfully` });
 });
 
 const server = app.listen(process.env.PORT, () => {
-  //console.log(`App is listening at http://localhost:${process.env.PORT}`);
-  console.log(`App is listening at http://localhost:4000`);
+  console.log(`App is listening at http://localhost:${process.env.PORT}`);
 });
 export default server;
