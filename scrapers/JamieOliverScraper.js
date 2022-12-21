@@ -25,9 +25,7 @@ async function getJamiesRecipes() {
             .replace(/\s\s+/g, " ")
             .trim();
         const source = url;
-        const quantity = []
-        const ingredientName = []
-        const ingredients = { quantity, ingredientName }
+        const ingredients = []
         const instructions = $(".method-p > div").first().text()
             .replace(/ *\([^)]*\) */g, "")
             .replace(/\s\s+/g, " ")
@@ -49,21 +47,12 @@ async function getJamiesRecipes() {
         })
 
         $("ul.ingred-list li").each((i, el) => {
-            const q = $(el)
-                .text()
-                .replace(/ *\([^)]*\) */g, "")
-                .replace(/\D/g, "")
-                .trim()
             const n = $(el)
                 .text()
                 .replace(/\s\s+/g, " ")
-                .replace(/ *\([^)]*\) */g, "")
-                .replace(/[0-9]/g, "")
                 .trim();
-            if (q !== "")
-                quantity.push(q)
             if (n !== "") {
-                ingredientName.push(n);
+                ingredients.push(n);
             }
         });
 

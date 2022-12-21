@@ -5,12 +5,7 @@ const receipeSchema = new Schema({
   serveSize: { type: Number, required: true },
   cookingTime: { type: String, required: true },
   source: { type: String, required: true },
-  ingredients: [
-    {
-      quantity: [{ type: String, required: true }],
-      ingredientName: [{ type: String, required: true }],
-    },
-  ],
+  ingredients: [{ type: String, required: true }],
   instructions: { type: String, required: true },
   category: [{ type: String, required: true }],
   photoURL: { type: String, required: true },
