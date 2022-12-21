@@ -1,25 +1,27 @@
 import express from "express";
 import { check, validationResult } from "express-validator";
-import Receipes from "../models/receipe.model.js";
+import Recipes from "../models/recipe.model.js";
 export const router = express.Router();
 
 router
   .route(`/`)
   .post(
     [
-      check("receipeName").exists().trim().isLength({ min: 2 }),
+      check("userid").exists().isNumeric(),
+      check("recipeName").exists().trim().isLength({ min: 2 }),
       check("serveSize").exists(),
       check("cookingTime").exists().trim(),
+      check("source").exists().trim(),
       check("ingredients").exists(),
       check("instructions").exists().trim().isLength({ min: 2 }),
-      check("category").exists().trim().isLength({ min: 2 }),
+      check("category").exists(),
       check("photoURL").exists().trim(),
     ],
     async (req, res) => {
       const errors = validationResult(req);
 
-      if (!errors.isEmpty() && errors.errors[0].param === "receipeName") {
-        return res.send({ message: `Please enter a valid Receipe Name` });
+      if (!errors.isEmpty() && errors.errors[0].param === "recipeName") {
+        return res.send({ message: `Please enter a valid Recipe Name` });
       }
       if (!errors.isEmpty() && errors.errors[0].param === "serveSize") {
         return res.send({ message: `Please enter a valid Serving Size` });
@@ -39,18 +41,18 @@ router
       }
       if (!errors.isEmpty()) {
         return res.status(422).json({
-          message: `There is a Error in Receipe Data.`,
+          message: `There is a Error in Recipe Data.`,
         });
       }
-      const receipeData = new Receipes(req.body);
+      const recipeData = new Recipes(req.body);
       try {
-        const receipes = await receipeData.save();
+        const recipes = await recipeData.save();
         res
           .status(201)
-          .json({ receipes, message: `Receipe has been Added Successfully` });
+          .json({ recipes, message: `Recipe has been Added Successfully.` });
       } catch {
         res.status(400).json({
-          message: `ReceipeData Insertion Fails`,
+          message: `RecipeData Insertion Fails.`,
         });
       }
     }

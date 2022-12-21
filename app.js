@@ -5,8 +5,9 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import methodOverride from "method-override";
 import { router as imageRouter } from "./routes/imageRouter.js";
-import { router as addReceipeRouter } from "./routes/addReceipeRouter.js";
-import { router as getReceipeRouter } from "./routes/getReceipeRouter.js";
+import { router as addRecipeRouter } from "./routes/addRecipeRouter.js";
+import { router as getRecipeRouter } from "./routes/getRecipeRouter.js";
+import { router as searchRecipeRouter } from "./routes/searchRecipeRouter.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 mongoose.set("strictQuery", true);
@@ -46,8 +47,9 @@ app.use(methodOverride("_method"));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(`/file`, imageRouter);
-app.use(`/addReceipe`, addReceipeRouter);
-app.use(`/getReceipe`, getReceipeRouter);
+app.use(`/addRecipe`, addRecipeRouter);
+app.use(`/getRecipe`, getRecipeRouter);
+app.use(`/searchRecipe`, searchRecipeRouter);
 
 // media GET routes and delete the routes of image.
 app.get("/file/:filename", async (req, res) => {

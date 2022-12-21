@@ -1,7 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
-const receipeSchema = new Schema({
-  receipeName: { type: String, require: true },
+const recipeSchema = new Schema({
+  userid: { type: Number, required: true },
+  recipeName: { type: String, require: true },
   serveSize: { type: Number, required: true },
   cookingTime: { type: String, required: true },
   source: { type: String, required: true },
@@ -10,6 +11,6 @@ const receipeSchema = new Schema({
   category: [{ type: String, required: true }],
   photoURL: { type: String, required: true },
 });
-const Receipes = mongoose.model(`Receipe`, receipeSchema);
+const Recipes = mongoose.model(`Recipe`, recipeSchema);
 
-export default Receipes;
+export default Recipes;
