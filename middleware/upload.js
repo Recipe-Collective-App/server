@@ -8,7 +8,7 @@ const storage = new GridFsStorage({
   url: `mongodb://localhost/image-upload`,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
-    const match = ["image/png", "image/jpeg", "image/jpg", "image/heic"];
+    const match = ["image/png", "image/jpeg", "image/heic"];
 
     if (match.indexOf(file.mimetype) === -1) {
       const filename = `${file.originalname}`;

@@ -37,7 +37,7 @@ async function getJamiesRecipes() {
 
         items.push({
             "recipeName": recipeName,
-            "serveSize": serveSize,
+            "serveSize": parseInt(serveSize),
             "source": source,
             "cookingTime": cookingTime,
             "ingredients": ingredients,

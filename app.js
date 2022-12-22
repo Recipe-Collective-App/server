@@ -62,7 +62,8 @@ app.get("/file/:filename", async (req, res) => {
     }
     if (
       files[0].contentType === `image/jpeg` ||
-      files[0].contentType === `image/png`
+      files[0].contentType === `image/png` ||
+      files[0].contentType === `image/heic`
     ) {
       gfs.openDownloadStreamByName(req.params.filename).pipe(res);
     } else {
