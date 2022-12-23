@@ -7,8 +7,8 @@ router.route(`/:userid`).get((req, res) => {
   Recipes.find({ userid }, (error, recipeData) => {
     error
       ? res.status(404).json({
-          message: `Sorry,There is no receipe found.Please Try Again!`,
-        })
+        message: `Sorry, no recipe found. Please try again.`,
+      })
       : res.status(200).json(recipeData);
   });
 });

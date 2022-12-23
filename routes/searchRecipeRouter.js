@@ -10,7 +10,7 @@ router.route(`/:userid/:category`).get((req, res) => {
     (error, recipeData) => {
       if (error || recipeData.length === 0)
         res.status(404).json({
-          message: `Sorry,There is no receipe found.Please Try Again!`,
+          message: `Sorry, no recipe found.`,
         });
       else {
         res.status(200).json(recipeData);

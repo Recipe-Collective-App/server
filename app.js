@@ -8,6 +8,7 @@ import { router as imageRouter } from "./routes/imageRouter.js";
 import { router as addRecipeRouter } from "./routes/addRecipeRouter.js";
 import { router as getRecipeRouter } from "./routes/getRecipeRouter.js";
 import { router as searchRecipeRouter } from "./routes/searchRecipeRouter.js";
+import { router as urlAddRecipeRouter } from "./routes/urlAddRecipeRouter.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 mongoose.set("strictQuery", true);
@@ -50,6 +51,7 @@ app.use(`/file`, imageRouter);
 app.use(`/addRecipe`, addRecipeRouter);
 app.use(`/getRecipe`, getRecipeRouter);
 app.use(`/searchRecipe`, searchRecipeRouter);
+app.use(`/urlAddRecipe`, urlAddRecipeRouter);
 
 // media GET routes and delete the routes of image.
 app.get("/file/:filename", async (req, res) => {

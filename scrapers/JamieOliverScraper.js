@@ -1,9 +1,7 @@
 import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
 
-async function getJamiesRecipes() {
-    let url = 'https://www.jamieoliver.com/recipes/chicken-recipes/cajun-chicken-traybake/'
-
+export async function getJamiesRecipes(url) {
     try {
         const res = await fetch(url);
 
@@ -11,8 +9,9 @@ async function getJamiesRecipes() {
 
         const $ = cheerio.load(body);
 
-        const items = [];
+        // const items = [];
 
+        const userid = "3"
         const recipeName = $(".single-recipe-title").text();
         const serveSize = $(".recipe-detail.serves").text()
             .replace("Serves", "")
@@ -23,7 +22,7 @@ async function getJamiesRecipes() {
             .replace("Cooks In", "")
             .replace("Time", "")
             .replace(/\s\s+/g, " ")
-            .trim();
+            .trim() || "N/A";
         const source = url;
         const ingredients = []
         const instructions = $(".method-p > div").first().text()
@@ -35,16 +34,17 @@ async function getJamiesRecipes() {
             $("meta[name='og:image']").attr("content") ||
             $("meta[itemprop='image']").attr("content");
 
-        items.push({
-            "recipeName": recipeName,
-            "serveSize": parseInt(serveSize),
-            "source": source,
-            "cookingTime": cookingTime,
-            "ingredients": ingredients,
-            "instructions": instructions,
-            "category": category,
-            "photoURL": photoURL
-        })
+        const items = {
+            userid, userid,
+            recipeName: recipeName,
+            serveSize: parseInt(serveSize),
+            source: source,
+            cookingTime: cookingTime,
+            ingredients: ingredients,
+            instructions: instructions,
+            category: category,
+            photoURL: photoURL
+        }
 
         $("ul.ingred-list li").each((i, el) => {
             const n = $(el)
@@ -66,11 +66,9 @@ async function getJamiesRecipes() {
             }
         });
 
-        console.log(items);
+        return items;
 
     } catch (error) {
         console.log(error);
     }
 }
-
-getJamiesRecipes();
