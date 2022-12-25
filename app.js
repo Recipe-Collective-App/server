@@ -9,6 +9,8 @@ import { router as addRecipeRouter } from "./routes/addRecipeRouter.js";
 import { router as getRecipeRouter } from "./routes/getRecipeRouter.js";
 import { router as searchRecipeRouter } from "./routes/searchRecipeRouter.js";
 import { router as urlAddRecipeRouter } from "./routes/urlAddRecipeRouter.js";
+import { router as getImageRouter } from "./routes/getImageRouter.js";
+import { router as deleteImageRouter } from "./routes/deleteImageRouter.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 mongoose.set("strictQuery", true);
@@ -28,21 +30,8 @@ const dbConnection = async () => {
     console.log(`Database failed to connect: ${e.message}`);
   }
 };
-const url = process.env.DB;
-const connect = mongoose.createConnection(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-// Init gfs
-let gfs;
-dbConnection();
-connect.once("open", () => {
-  // Init stream
-  gfs = new mongoose.mongo.GridFSBucket(connect.db, {
-    bucketName: "photos",
-  });
-});
 
+dbConnection();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(bodyParser.json());
@@ -52,39 +41,8 @@ app.use(`/addRecipe`, addRecipeRouter);
 app.use(`/getRecipe`, getRecipeRouter);
 app.use(`/searchRecipe`, searchRecipeRouter);
 app.use(`/urlAddRecipe`, urlAddRecipeRouter);
-
-// media GET routes and delete the routes of image.
-app.get("/file/:filename", async (req, res) => {
-  await gfs.find({ filename: req.params.filename }).toArray((err, files) => {
-    if (!files[0] || files.length === 0) {
-      return res.status(200).json({
-        success: false,
-        message: "Image Not Found!",
-      });
-    }
-    if (
-      files[0].contentType === `image/jpeg` ||
-      files[0].contentType === `image/png` ||
-      files[0].contentType === `image/heic`
-    ) {
-      gfs.openDownloadStreamByName(req.params.filename).pipe(res);
-    } else {
-      res.status(404).json({
-        err: `Image Not Found!`,
-      });
-    }
-  });
-});
-
-app.delete("/file/:id", async (req, res) => {
-  await gfs.delete(new mongoose.Types.ObjectId(req.params.id)),
-    (err, data) => {
-      return res.status(404).json({ err: err });
-    };
-  res
-    .status(200)
-    .json({ success: true, message: `Image Deleted Successfully` });
-});
+app.use(`/getImage`, getImageRouter);
+app.use(`/deleteImage`, deleteImageRouter);
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`App is listening at http://localhost:${process.env.PORT}`);

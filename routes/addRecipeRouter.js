@@ -41,15 +41,13 @@ router
       }
       if (!errors.isEmpty()) {
         return res.status(422).json({
-          message: `An error has occurred.`,
+          message: `Cannot add recipe at this time. Please try again.`,
         });
       }
       const recipeData = new Recipes(req.body);
       try {
         const recipes = await recipeData.save();
-        res
-          .status(201)
-          .json({ recipes, message: `Recipe added!` });
+        res.status(201).json({ recipes, message: `Recipe added!` });
       } catch {
         res.status(400).json({
           message: `Cannot add recipe at this time. Please try again.`,

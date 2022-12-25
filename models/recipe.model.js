@@ -10,6 +10,7 @@ const recipeSchema = new Schema({
   instructions: { type: String, required: true },
   category: [{ type: String, required: true }],
   photoURL: { type: String, required: true },
+  date: { type: Date, default: new Date() },
 });
 const Recipes = mongoose.model(`Recipe`, recipeSchema);
 
