@@ -5,7 +5,7 @@ import { GridFsStorage } from "multer-gridfs-storage";
 //We save image in database and return it
 
 const storage = new GridFsStorage({
-  url: `mongodb://localhost/image-upload`,
+  url: `mongodb+srv://swetashah:chitter12@cluster0.a0ek0j7.mongodb.net/dbrecipe?retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true`,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => {
     const match = ["image/png", "image/jpeg", "image/heic"];

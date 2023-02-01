@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 export const router = express.Router();
 
-const url = `mongodb://localhost/image-upload`;
+const url = `mongodb+srv://swetashah:chitter12@cluster0.a0ek0j7.mongodb.net/dbrecipe?retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true`;
 const connect = mongoose.createConnection(url, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
