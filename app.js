@@ -44,7 +44,8 @@ app.use(`/urlAddRecipe`, urlAddRecipeRouter);
 app.use(`/getImage`, getImageRouter);
 app.use(`/deleteImage`, deleteImageRouter);
 
-const server = app.listen(process.env.PORT, () => {
-  console.log(`App is listening at http://localhost:${process.env.PORT}`);
+const PORT = process.env.PORT || 4001;
+const server = app.listen(PORT, () => {
+  console.log(`App is listening at http://localhost:${PORT}`);
 });
 export default server;
